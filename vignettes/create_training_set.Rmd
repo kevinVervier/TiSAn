@@ -91,7 +91,7 @@ lincSNP = read.csv('LincSNP-filtered.csv')
 db.pos = feature_extraction(lincSNP$chr_name,lincSNP$chrom_start)
 # MetaboChip
 probeSet = read.csv(file='MetaboChip.heart.csv',header=TRUE)
-tmp = featureExtractionGenomeWide(probeSet$CHROM,probeSet$POS)
+tmp = feature_extraction(probeSet$CHROM,probeSet$POS)
 #merge
 db.pos = rbind(db.pos,tmp)
 # remove chr 23
@@ -112,10 +112,10 @@ Extract features for negative examples databases
 ```{r}
 #LincSNP
 lincSNP = read.csv('LincSNP-filtered-negative.csv')
-db.neg = featureExtractionGenomeWide(lincSNP$chr_name,lincSNP$chrom_start)
+db.neg = feature_extraction(lincSNP$chr_name,lincSNP$chrom_start)
 # Metabochip
 metabo = read.csv(file='../../input/Heart/MetaboChip.bgd_rep2.csv',header=TRUE)
-tmp = featureExtractionGenomeWide(metabo$CHROM,metabo$POS)
+tmp = feature_extraction(metabo$CHROM,metabo$POS)
 #merge
 db.neg = rbind(db.neg,tmp)
 # remove chr 23

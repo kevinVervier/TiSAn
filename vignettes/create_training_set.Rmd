@@ -1,0 +1,150 @@
+---
+title: "Create tissue-specific training set"
+author: "Kevin Vervier"
+date: "April 17, 2017"
+output: html_document
+---
+
+This vignette shows how to derive a tissue-specific training set, based on disease-associated loci (coding and non-coding), and also how to extract features forthose positions. Here, we derive a training set for a human heart model, and also indicate where source needs to be changed for other tissue application.
+
+# Prepare disease-related databases for position extraction
+
+Here, we propose to use publically available data sets, such as LincSNP (large intergenic non-coding loci) and genotype array probeset (MetaboChip).
+
+For LincSNP database, we downloaded version1.0 at http://210.46.85.180:8080/LincSNP/download/gwas_snp_lincrna.txt, and applied the following processing:
+
+```{r}
+# create a csv version of LincSNP
+x = read.delim('gwas_snp_lincrna.txt')
+
+#convert snpID to position
+library(biomaRt)
+snp_mart = useMart(biomart="ENSEMBL_MART_SNP", host="grch37.ensembl.org", dataset="hsapiens_snp")
+snp_ids = x$rsId
+snp_attributes = c("refsnp_id","chr_name", "chrom_start","chrom_end","allele_1","minor_allele")
+
+snp_locations = getBM(attributes=snp_attributes, filters="snp_filter", values=snp_ids, mart=snp_mart)
+#filter wrt SNPs ID not on chr
+tmp = which(snp_locations$chr_name %in% c(1:22,'X','Y'))
+snp_locations = snp_locations[tmp,]
+
+#filter lincSNP wrt to found SNPs
+idx = match(x$rsId,snp_locations$refsnp_id)
+x = x[!is.na(idx),]
+
+#multiple occurences of 1 SNP in linCNP --> non-unicity
+lincSNP = cbind(snp_locations[idx[!is.na(idx)],],x[,-1])
+#sort wrt position
+lincSNP = lincSNP[order(lincSNP$chr_name,lincSNP$chrom_start,decreasing = F),]
+
+write.csv(lincSNP,file='LincSNP.csv',row.names = FALSE,quote=FALSE)
+
+# filter with respect to GWAS Catalog
+sub.linc = lincSNP[which(lincSNP$Source %in% c('GWAS Catalog','GWASCentral')),]
+
+# need to map disease names 
+disease.names = c('Abdominal aortic aneurysm','Angiotensin-converting enzyme activity','Aortic root size','Arterial stiffness','Atrial fibrillation','Atrioventricular conduction',
+                 'Blood pressure','Cardiac hypertrophy','Cardiac repolarization','Cardiac structure and function','Cardiovascular disease','Carotid atherosclerosis','Coronary artery calcification','Coronary artery disease','Coronary disease','Coronary heart disease',
+                 'Coronary restenosis','Coronary spasm','CVD outcomes','Diastolic blood pressure','Dilated cardiomyopathy','Electrocardiographic traits','Echocardiographic traits',
+                 'Heart rate variability traits','Heart diseases','Heart failure','Heart rate variability traits','Hypertension','Hypotension','Intima-media thickness myocardial infarct','Left ventricular mass','Long QT syndrome','Major CVD','Myocardial infarction','Peripartum cardiomyopathy','Peripheral artery disease',
+                 'PR interval','QT interval','Resting heart rate','RR interval','Sudden cardiac arrest','Systolic blood pressure',
+                 'Thoracic aortic aneurysms and dissections','Torsades de Pointes','Total ventricular volume','Triglycerides-Blood pressure','Triglycerides','Ventricular conduction', 
+                 'Serum metabolites','Serum uric acid','HDL cholesterol','Acenocoumarol maintenance dosage','log10 serum total immunoglobulin E concentration','Diabetes','Birth weight',
+                 'Sphingolipid concentrations','Serum cholesterol levels','LDL cholesterol','Body mass','log10 glycosylated haemoglobin','log10 fibrinogen','Lipoprotein-associated phospholipase A2 activity and mass',
+                 'Cholesterol','C-reactive protein blood levels') # included cholesterol, not blood cell related disorders
+idx = match(sub.linc$Phenotype,disease.names) # 1,282 heart-related positions in GWAS catalog
+# write positive examples
+write.csv(sub.linc[!is.na(idx),],file='LincSNP-filtered.csv',row.names=F,quote=F)
+# get negative examples
+write.csv(sub.linc[is.na(idx),],file='LincSNP-filtered-negative.csv',row.names=F,quote=F)
+
+```
+
+For genotype array probeset (like MetaboChip), we downloaded markers specs file (http://csg.sph.umich.edu/kang/MetaboChip/), and processed as follow
+```{r}
+# Using MetaboChip locations specific to CAD, ICBP and QT interval, but not found in other traits
+metabo = read.delim('MetaboChip.markers.ncbi37.20101203.tsv',header=TRUE)
+#get positive examples
+idx = grep(metabo$INFO,pattern = 'REPL_TIER(1)_(MICAD|DBP|SBP|QT)') # 20,494 loci
+sub.metabo = metabo[idx,]
+# remove 35 loci with chrom=0 and pos=0
+sub.metabo = sub.metabo[-which(sub.metabo$CHROM == 0),] # 20,459 loci
+write.csv(sub.metabo[,1:2],file='MetaboChip.heart.csv',row.names = FALSE)
+#get negative replication loci, by removing the positive ones
+idx.tissue = grep(metabo$INFO,pattern = 'REPL_TIER(1)_(MICAD|DBP|SBP|QT)') # 20,494 loci
+#idx.rep = grep(metabo$INFO,pattern = 'REPL_TIER(1|2)') # 63,405 loci --> too large set, try to use rep2 only
+idx.rep = grep(metabo$INFO,pattern = 'REPL_TIER(2)') # 15,791 loci
+idx.neg = idx.rep[-which(idx.rep %in% idx.tissue)] # 42,911 negative loci
+sub.metabo = metabo[idx.neg,]
+# remove 84 loci with chrom=0 and pos=0
+sub.metabo = sub.metabo[-which(sub.metabo$CHROM == 0),] # 42,827 loci
+#write.csv(sub.metabo[,1:2],file='../../input/Heart/MetaboChip.bgd.csv',row.names = FALSE)
+write.csv(sub.metabo[,1:2],file='MetaboChip.bgd.csv',row.names = FALSE)
+
+```
+
+Extract features for positive examples databases
+```{r}
+
+#lincSNP
+lincSNP = read.csv('LincSNP-filtered.csv')
+db.pos = feature_extraction(lincSNP$chr_name,lincSNP$chrom_start)
+# MetaboChip
+probeSet = read.csv(file='MetaboChip.heart.csv',header=TRUE)
+tmp = featureExtractionGenomeWide(probeSet$CHROM,probeSet$POS)
+#merge
+db.pos = rbind(db.pos,tmp)
+# remove chr 23
+idx = which(db.pos[,1] == 23)
+db.pos = db.pos[-idx,]
+# keep unique positions
+pos=paste(db.pos[,1],db.pos[,2],sep='-')
+idx.dup = which(duplicated(pos))
+length(pos) - length(idx.dup) # 21,562 unique positions
+# save training positions information
+write.table(db.pos[-idx.dup,1:2],file='positive_loci.txt',quote=FALSE,row.names = FALSE)
+#remove location information
+db.pos = db.pos[-idx.dup,-c(1,2)]
+save(db.pos,file='positive_db.Rdata')
+```
+
+Extract features for negative examples databases
+```{r}
+#LincSNP
+lincSNP = read.csv('LincSNP-filtered-negative.csv')
+db.neg = featureExtractionGenomeWide(lincSNP$chr_name,lincSNP$chrom_start)
+# Metabochip
+metabo = read.csv(file='../../input/Heart/MetaboChip.bgd_rep2.csv',header=TRUE)
+tmp = featureExtractionGenomeWide(metabo$CHROM,metabo$POS)
+#merge
+db.neg = rbind(db.neg,tmp)
+# remove chr 23
+idx = which(db.neg[,1] == 23)
+db.neg = db.neg[-idx,]
+# keep unique positions
+pos=paste(db.neg[,1],db.neg[,2],sep='-')
+idx.dup = which(duplicated(pos))
+length(pos) - length(idx.dup) # 34,917 unique positions
+# save training positions information
+write.table(db.neg[-idx.dup,1:2],file='negative_loci.txt',quote=FALSE,row.names = FALSE)
+#remove location information
+db.neg = db.neg[-idx.dup,-c(1,2)]
+save(db.neg,file='negative_db.Rdata')
+```
+
+Filter positions found in both positive and negative sets.
+```{r}
+
+###########################################################
+# filter positions found in both positive and negative sets
+
+pos.pos = read.table('positive_loci.txt',header=TRUE)
+neg.pos = read.table('negative_loci.txt',header=TRUE)
+
+tmp = c(paste(pos.pos[,1],pos.pos[,2],sep='-'),paste(neg.pos[,1],neg.pos[,2],sep='-'))
+idx = which(duplicated(tmp))
+# remove duplicated from negative examples --> balance issue
+db.neg = db.neg[-idx,]
+save(db.neg,file='negative_db_hearteQTL.Rdata')
+
+```

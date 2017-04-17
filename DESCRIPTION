@@ -1,0 +1,19 @@
+Package: TiSAn
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.2.1)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Imports:
+	MASS (>= 7.3),
+	RCurl (>= 1.95),
+	XML (>= 3.98),
+	circlize (>= 0.3.9),
+	annotate (>= 1.48.0),
+	BSgenome.Hsapiens.UCSC.hg19 (>= 1.4.0)
+
+

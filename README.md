@@ -7,7 +7,8 @@ Here, two models are made available as examples: the human brain and heart.
 
 ## Installation 
 Run the following comand in R:
-devtools::install_github("kevinVervier/TiSAn")
+
+`devtools::install_github("kevinVervier/TiSAn")`
 
 ## Dependencies (R packages)
 All packages should be installed automatically at the same time that TiSAN package.
@@ -18,13 +19,19 @@ User can find human brain and heart databases, as gzipped .bed files (+index) at
 ## Examples
 To automatically annotate variants with TiSAn scores, we propose to use 'vcfanno' tool. Please note that most of the annotation tools will work with a datbase in bed format.
 The following command calls vcfanno on a $VCF file containing positions to be annotated, and $CONFIG contains several parameters for vcfanno.
-vcfanno $CONFIG $VCF 
+
+`vcfanno $CONFIG $VCF` 
 
 Here is an example of CONFIG file:
-[[annotation]]
+
+`[[annotation]]
+
 file="TiSAn_Brain.bed.gz"
+
 columns=[4]
+
 names=["TiSBrain"]
-ops=["max"]
+
+ops=["max"]`
 
 

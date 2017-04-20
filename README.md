@@ -24,14 +24,14 @@ The following command calls vcfanno on a $VCF file containing positions to be an
 
 Here is an example of CONFIG file:
 
-`[[annotation]]
+`[[annotation]]`
 
-file="TiSAn_Brain.bed.gz"
+`file="TiSAn_Brain.bed.gz"`
 
-columns=[4]
+`columns=[4]`
 
-names=["TiSBrain"]
+`names=["TiSBrain"]`
 
-ops=["max"]`
+`ops=["max"]`
 
 

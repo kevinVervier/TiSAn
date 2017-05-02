@@ -6,7 +6,7 @@ The general framework proposed with TiSAn will help researchers creating a predi
 Here, two models are made available as examples: the human brain and heart.
 
 ## Installation 
-Run the following comand in R:
+Run the following command in R:
 
 `devtools::install_github("kevinVervier/TiSAn")`
 

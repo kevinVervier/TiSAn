@@ -19,23 +19,27 @@ http://flamingo.psychiatry.uiowa.edu/TiSAn_Heart.bed.gz
 http://flamingo.psychiatry.uiowa.edu/TiSAn_Heart.bed.gz.tbi
 http://flamingo.psychiatry.uiowa.edu/TiSAn_Brain.bed.gz
 http://flamingo.psychiatry.uiowa.edu/TiSAn_Brain.bed.gz.tbi
+For the following examples, we assume that those databases have been downloaded and stored in the `data` repository.
 
-## Examples
-To automatically annotate variants with TiSAn scores, we propose to use 'vcfanno' tool. Please note that most of the annotation tools will work with a datbase in bed format.
-The following command calls vcfanno on a $VCF file containing positions to be annotated, and $CONFIG contains several parameters for vcfanno.
+## Example: Variants set annotation
 
-`vcfanno $CONFIG $VCF` 
+To automatically annotate variants with TiSAn scores, we propose to use `vcfanno` tool (http://github.com/brentp/vcfanno). Please note that most of the annotation tools will work with a database in bed format.
+The following command calls `vcfanno` on a VCF file containing positions to be annotated, and a configuration containing  parameters for `vcfanno`.
 
-Here is an example of CONFIG file:
+`vcfanno data/TiSAn.conf data/example1.vcf` 
 
-`[[annotation]]`
+The output is a new VCF file with an additional FORMAT column with two fields (TiSB for brain and TiSH for heart):
 
-`file="TiSAn_Brain.bed.gz"`
+`#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT`
 
-`columns=[4]`
+`1	1005806	rs3934834	C	T	0.0	PASS	TiSB=0;TiSH=0.4307`
 
-`names=["TiSBrain"]`
+`1	243943084	rs4132509	C	A	0.0	PASS	TiSB=0;TiSH=0.5663`
 
-`ops=["max"]`
+`13	81753314	rs12584499	C	G	0.0	PASS	TiSB=0.718;TiSH=0`
 
+`14	62763347	rs2354331	C	T	0.0	PASS	TiSB=0.358;TiSH=0.2904`
 
+`21	37417489	rs2835248	A	G	0.0	PASS	TiSB=0;TiSH=0`
+
+`4	154746806	rs10031057	A	G	0.0	PASS	TiSB=0;TiSH=0.8565`

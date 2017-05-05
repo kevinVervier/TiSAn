@@ -14,11 +14,12 @@ Run the following command in R:
 All packages should be installed automatically at the same time that TiSAN package.
 
 ## Databases
-User can find human brain and heart databases, as gzipped .bed files (+index) at: 
-http://flamingo.psychiatry.uiowa.edu/TiSAn_Heart.bed.gz
-http://flamingo.psychiatry.uiowa.edu/TiSAn_Heart.bed.gz.tbi
-http://flamingo.psychiatry.uiowa.edu/TiSAn_Brain.bed.gz
-http://flamingo.psychiatry.uiowa.edu/TiSAn_Brain.bed.gz.tbi
+User can find human brain and heart databases, as gzipped .bed files (+index) at: http://flamingo.psychiatry.uiowa.edu/TiSAn/
+- TiSAn_Heart.bed.gz
+- TiSAn_Heart.bed.gz.tbi
+- TiSAn_Brain.bed.gz
+- TiSAn_Brain.bed.gz.tbi
+
 For the following examples, we assume that those databases have been downloaded and stored in the `data` repository.
 
 ## Example: Variants set annotation

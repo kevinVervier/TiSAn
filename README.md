@@ -54,6 +54,7 @@ http://genome.ucsc.edu/cgi-bin/hgCustom?hgsid=447125520_fox8vKausTjV0qFdw8xfg3Bo
 
 - Step 2: Paste the following text into the "Paste URLs or data" box, and click "submit":
 
-track type=bigWig name="Brain" description="TiSAn-Brain" visibility=full autoScale=on alwaysZero=on maxHeightPixels=100:30:10 color=24,181,84 bigDataUrl=http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_Brain.bw
+track type=bigWig name="Brain" description="TiSAn-Brain" visibility=full autoScale=off alwaysZero=on maxHeightPixels=100:30:10 color=24,181,84 bigDataUrl=http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_Brain.bw
+track type=bigWig name="Heart" description="TiSAn-Heart" visibility=full autoScale=off alwaysZero=on maxHeightPixels=100:30:10 color=181,24,84 bigDataUrl=http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_Heart.bw
 
-This will result in adding a track for TiSAn-Brain score. To display TiSAn-Heart, one simply can replace the URL by:  http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_Heart.bw
+This will result in adding 2 tracks (TiSAn-Brain and TiSAn-Heart scores).

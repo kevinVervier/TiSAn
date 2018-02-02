@@ -58,3 +58,10 @@ track type=bigWig name="Brain" description="TiSAn-Brain" visibility=full autoSca
 track type=bigWig name="Heart" description="TiSAn-Heart" visibility=full autoScale=off alwaysZero=on maxHeightPixels=100:30:10 color=181,24,84 bigDataUrl=http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_Heart.bw
 
 This will result in adding 2 tracks (TiSAn-Brain and TiSAn-Heart scores).
+
+## TiSAn-view
+
+We also developed a GUI to efficiently annotate shortlists of genomic loci, and get details on individual feature used by TiSAn to make the predictions.
+Please refer to the TISAn-view folder on this Github repository.
+
+![screenshot](TiSAn-view/tisan_view.png)

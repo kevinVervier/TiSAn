@@ -13,7 +13,7 @@ Run the following command in R:
 `devtools::install_github("kevinVervier/TiSAn")`
 
 ## Dependencies (R packages)
-All packages should be installed automatically at the same time that TiSAN package.
+All packages should be installed automatically at the same time that TiSAn package.
 
 ## Databases
 User can find human brain and heart databases, as gzipped .bed files (+index) at: http://flamingo.psychiatry.uiowa.edu/TiSAn/

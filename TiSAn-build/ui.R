@@ -81,6 +81,29 @@ shinyUI(fluidPage(#theme = "bootstrap.css",
       p('This part is left for users to include more features with domain-specific data.'),
       
       p('One can adapt what is done in the previous three panels depending on the data type.')
+    )),
+    # Panel where training position are extracted
+    tabPanel("Training set composition",mainPanel(
+      p('In this section, user provides sets of both tissue and non-tissue related loci.'),
+      p('We recommend those loci to be associated with diseases in both sets.'),
+      
+      #tags$h1("Non-coding loci"),
+
+      p('To train our models, we relied on LinCSNP database (http://210.46.80.146/lincsnp/LncRNA-ldSNP.zip) and unzip it in the TISAn-build folder.'),
+      p('Once it is done, provide its directory location:'),
+      tags$p(shinyDirButton('lincsnp_directory', 'Push to select a directory', 'Please select a folder'), align= "center"),
+      p('Once the file selection is completed, hit the button to create tissue and non-tissue databases'),
+      actionButton("lincsnp_button", "lincSNP disease selection done"),
+      uiOutput("linc_disease"),
+
+      p('NB: '),
+      tags$ul(
+        tags$li('This directory contains a file for each chromosome containing disease-associated SNPs.'),
+        tags$li('Multiple diseases can be provided.'),
+        tags$li('It is technically possible to use a different database, only if the file format is similar to lincSNP one.')
+      )
+      
+      
     ))
   )
 ))

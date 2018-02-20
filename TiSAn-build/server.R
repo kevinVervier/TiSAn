@@ -245,6 +245,85 @@ shinyServer(function(input, output,session) {
     
   })
   
+  #########################
+  # training set - lincSNP
+  
+  # lincSNP database location
+  shinyDirChoose(input, 'lincsnp_directory', session=session, roots=c(wd='.'))
+  path_lincsnp <- reactive({
+    return(print(parseDirPath(roots=c(wd='.'), input$lincsnp_directory)))
+  })
+  # get all disease names in lincSNP (at least frequent ones)
+  output$linc_disease <- renderUI({
+    if(is.null(input$lincsnp_directory))
+      return()
+    withProgress(message = 'Loading LincSNP database', value = 0, {
+      linc.files <- list.files(path = path_lincsnp(), pattern = '.txt',full.names = TRUE)
+      # read the files and find disease names
+      dis.names <- NULL
+      n <- length(linc.files)
+      
+      for(f in linc.files){
+        incProgress(1/n, detail = paste("Reading", f))
+        
+        tmp <- read.delim(f,header=FALSE, colClasses=c(rep("NULL",21), NA, "NULL","NULL"),as.is = TRUE)[,1]
+        dis.names = c(dis.names,tmp)
+      }
+      #dis.names <- as.character(dis.names)
+      # can change this filter to see more diseases
+      dis.names <- names(which(table(dis.names) > quantile(table(dis.names),p=0.999)))
+      
+      checkboxGroupInput("dis_names", "Choose columns", 
+                         choices  =  dis.names,
+                         selected =   dis.names[grep(pattern = paste(c('Suicide attempts in bipolar disorder','Alzheimer`s disease','Parkinson`s disease','Bipolar disorder','Depression--quantitative trait','Cognitive performance','Major depressive disorder',
+                                                                       'Schizophrenia','Alcohol','Personality dimensions','Narcolepsy','Information processing speed','Smoking behavior','White matter hypersensitivity burden','Attention deficit hyperactivity disorder',
+                                                                       'Nicotine dependence','Alcoholism','Intelligence','Coffee consumption','Panic disorder','Neuroblastoma','Cognition phenotypes','Asperger disorder','Brain lesion load','Caffeine consumption',
+                                                                       'Autism','Drinking behavior','Hippocampal atrophy','Response to lithium treatment in bipolar disorder','Conduct disorder','Suicidal ideation','Hoarding','Anorexia nervosa','Response to antipsychotic treatment'),collapse="|") ,x = dis.names)])
+    })
+  })
+  
+  
+  # split all lincSNP in two files (tissue and non-tissue) only after 'Done' button is hit
+  observeEvent(input$lincsnp_button, {
+    if(is.null(input$lincsnp_directory))
+      return()
+    # check if the databases already exist
+    if(file.exists('train_lincsnp_pos.txt'))
+      return('It seems that the database already exists.') # TODO: print this message
+    
+    linc.files <- list.files(path = path_lincsnp(), pattern = '.txt',full.names = TRUE)
+    
+    withProgress(message = 'Screening LincSNP database', value = 0, {
+      linc.files <- list.files(path = path_lincsnp(), pattern = '.txt',full.names = TRUE)
+      # read the files and find disease names
+      pos <- NULL
+      neg <- NULL
+      
+      n <- length(linc.files) + 1
+      
+      for(f in linc.files){
+        incProgress(1/n, detail = paste("Reading", f))
+        tmp <- read.delim(f,header=FALSE,as.is = TRUE)[,c(1,16,18,22)]
+        idx = which(tmp$V22 %in% input$dis_names)
+        
+        pos = rbind(pos,tmp[idx,])
+        neg = rbind(neg,tmp[-idx,])
+      }
+      # filter missing rsIDs
+      pos <- pos[grep(pattern = 'rs',pos[,3]),]
+      neg <- neg[grep(pattern = 'rs',neg[,3]),]
+      # filter duplicated IDs
+      pos <- pos[!duplicated(pos[,3]),]
+      neg <- neg[!duplicated(neg[,3]),]
+      incProgress(1/n, detail = paste("Writing training sets"))
+      write.table(pos,file='train_lincsnp_pos.txt',quote = FALSE,row.names = FALSE,col.names = c("chr","pos","rsid","disease"),sep = '\t')
+      write.table(neg,file='train_lincsnp_neg.txt',quote = FALSE,row.names = FALSE,col.names = c("chr","pos","rsid","disease"),sep = '\t')
+      
+    })
+    
+  })
+  
+  
   
   
 })

@@ -67,3 +67,10 @@ We also developed a GUI to efficiently annotate shortlists of genomic loci, and 
 Please refer to the TISAn-view folder on this Github repository.
 
 ![screenshot](TiSAn-view/tisan_view.png)
+
+## TiSAn-build
+
+We developed a GUI to efficiently create tissue-specific databases from publically available datasets. Different panels cover GTEx eQTLs, RoadMap Epigenomics DNA methylation, literature mining on PubMed, and a custom database that could be changed by users.
+Please refer to the TISAn-build folder on this Github repository.
+
+![screenshot](TiSAn-view/tisan_build.png)

@@ -6,7 +6,10 @@
 if(!require(shiny)) install.packages('shiny')
 if(!require(shinyFiles)) install.packages('shinyFiles')
 if(!require(DT)) install.packages('DT')
-if(!require(biomaRt)) install.packages('biomaRt')
+if(!require(biomaRt)){
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("biomaRt")
+}
 if(!require(genomation)){
   source("https://bioconductor.org/biocLite.R")
   biocLite("genomation")

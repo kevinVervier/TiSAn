@@ -7,8 +7,8 @@ Current version works well for dozens of variants, but will probably run slowly 
 This graphical user interface (GUI) is powered by Shiny, and so require R to be installed.
 
 Users also need to download TiSAn score databases for both brain and heart tissues (lite version) that could be found at the following address: 
-* http://flamingo.psychiatry.uiowa.edu/TiSAn_brain_lite.Rdata
-* http://flamingo.psychiatry.uiowa.edu/TiSAn_heart_lite.Rdata
+* http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_brain_lite.Rdata
+* http://flamingo.psychiatry.uiowa.edu/TiSAn/TiSAn_heart_lite.Rdata
 
 Using the following command line in the repository, where TiSAn-view was downloaded, will open the GUI.
 

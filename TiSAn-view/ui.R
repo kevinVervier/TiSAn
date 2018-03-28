@@ -5,9 +5,9 @@
 if(!require(plotly)) install.packages('plotly')
 
 shinyUI(fluidPage(#theme = "bootstrap.css",
-  
+
   titlePanel("TiSAn: Tissue Specific Annotation for Genetic Variations"),
-  
+
   navlistPanel(
     "Introduction",
     # warm-up
@@ -81,10 +81,8 @@ shinyUI(fluidPage(#theme = "bootstrap.css",
       verbatimTextOutput("event")
     )),
     tabPanel("Heart annotation",mainPanel(
-      p('Apply TiSAn-Heart score to the loci of interest:'),
-      p('You can also click on a given row to get details on how the score was estimated for the correspoding locus.'),
-      p('It is possible to export the whole table.'),
-      DT::dataTableOutput("heart_map")
+      plotlyOutput("plot.heart"),
+      verbatimTextOutput("event.heart")
     ))
   )
 ))

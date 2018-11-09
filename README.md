@@ -1,7 +1,7 @@
 # TiSAn
 Tissue-specific variant annotation
 
-Preprint version: http://www.biorxiv.org/content/early/2017/08/30/141408
+Bioinformatics accepted version: http://academic.oup.com/bioinformatics/article/34/18/3061/4975416
 
 This project aims at providing a functional annotation tool for genetic variation, using prior on different tissues.
 The general framework proposed with TiSAn will help researchers creating a predictive model for their tissue of interest.
